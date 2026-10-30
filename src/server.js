@@ -5,6 +5,10 @@ const userRoutes = require('./routes/user.routes');
 const tableRoutes = require('./routes/table.routes');
 const reservationRoutes = require('./routes/reservation.routes'); 
 const app = express();
+const cors = require("cors");
+
+// Enable CORS for all origins
+app.use(cors());
 
 app.use(express.json());
 app.use('/api/users', userRoutes);
