@@ -9,8 +9,9 @@ const cors = require("cors");
 
 // Enable CORS for all origins
 app.use(cors());
+// Parse JSON before handling API routes.
+app.use(express.json({ limit: "5mb" }));
 
-app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/tables', tableRoutes);
 app.use('/api/reservations', reservationRoutes);

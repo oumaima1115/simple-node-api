@@ -9,9 +9,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // then paste this line of code: require('crypto').randomBytes(64).toString('hex')
 const { Types } = require('mongoose');
 const RevokedToken = require('../models/RevokedToken');
-const { validatePassword, validateEmail} = require('../utils/validateUser');
+const { validatePassword, validateEmail } = require('../utils/validateUser');
 
-exports.getAll = async(req, res) => {
+exports.getAll = async (req, res) => {
   const users = await User.find();
   res.json(users);
 };
@@ -26,21 +26,21 @@ exports.getUserByEmail = async (req, res) => {
   const user = await User.findOne({ email: req.params.email });
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
-  } 
+  }
   res.json(user);
 };
 
 exports.update = async (req, res) => {
-  const  {id} = req.params;
+  const { id } = req.params;
   if (!Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid user ID' });
   }
-  const user = await User.findByIdAndUpdate(id, req.body, { returnDocument: 'after'  });
+  const user = await User.findByIdAndUpdate(id, req.body, { returnDocument: 'after' });
   res.json(user);
 };
 
 exports.remove = async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   if (!Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: 'Invalid user ID' });
   }
@@ -50,7 +50,7 @@ exports.remove = async (req, res) => {
 
 exports.signUp = async (req, res) => {
   try {
-    const { email, password, name, phone, role } = req.body;
+    const { email, password, name, phone, role, image } = req.body;
 
     if (!validateEmail(email)) {
       return res.status(400).json({ message: "Invalid email format" });
@@ -64,13 +64,15 @@ exports.signUp = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
+    
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
       phone,
-      role
+      role,
+      image: image || null // Set image to null if not provided
     });
     res.status(201).json({ message: "User created successfully", userId: user._id });
   } catch (error) {
